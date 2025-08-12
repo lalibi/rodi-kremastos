@@ -1,0 +1,173 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES } from '../config/site';
+
+const base = `${import.meta.env.BASE_URL}/photos/about/`;
+
+const media: Array<{ src: string; type: 'image' | 'video'; alt: string }> = [
+  // Photos
+  { src: 'owner-with-pomegranates.jpg', type: 'image', alt: 'Παραγωγός με ρόδια στον Κρεμαστό Ευβοίας' },
+  { src: 'owner-on-field.jpg', type: 'image', alt: 'Παραγωγός στο χωράφι' },
+  { src: 'field-1.jpg', type: 'image', alt: 'Καλλιέργεια ροδιάς – θέα στο χωράφι' },
+  { src: 'field-2.jpg', type: 'image', alt: 'Σειρές ροδιάς στο χωράφι' },
+  { src: 'field-3.jpg', type: 'image', alt: 'Καλλιέργεια ροδιάς – διαφορετική γωνία' },
+  { src: 'field-4.jpg', type: 'image', alt: 'Καλλιέργεια ροδιάς – θέα προς τον ορίζοντα' },
+  { src: 'truck-on-field.jpg', type: 'image', alt: 'Δρόμος στο χωράφι με ροδιές' },
+  { src: 'tractor-on-field.jpg', type: 'image', alt: 'Τρακτέρ στο χωράφι' },
+  { src: 'pomegranates.jpg', type: 'image', alt: 'Καλάθι με φρέσκα ρόδια' },
+  { src: 'pomegranate-cut.jpg', type: 'image', alt: 'Κομμένο ρόδι – ζουμεροί σπόροι' },
+  { src: 'pomegranate-2.jpg', type: 'image', alt: 'Κοντινό σε καρπό ροδιού' },
+  { src: 'tree.jpg', type: 'image', alt: 'Ροδιά με ώριμους καρπούς' },
+  { src: 'fruit.jpg', type: 'image', alt: 'Κοντινό πλάνο ροδιού' },
+  { src: 'new-fruits.jpg', type: 'image', alt: 'Νεαροί καρποί ροδιού στην καλλιέργεια' },
+  { src: 'new-fruit.jpg', type: 'image', alt: 'Νεαρός καρπός ροδιού' },
+  { src: 'bottle-on-desk.jpg', type: 'image', alt: 'Φιάλη χυμού ροδιού επάνω σε επιφάνεια' },
+  { src: 'bottle-seal.jpg', type: 'image', alt: 'Σφραγίδα ασφαλείας στη φιάλη' },
+  { src: 'beeswax-ointment.jpg', type: 'image', alt: 'Κεραλοιφή με έλαιο ροδιού' },
+  { src: 'pomegranate-syrup.jpg', type: 'image', alt: 'Σιρόπι/πετιμέζι ροδιού' },
+  // Videos
+  { src: 'bottling.mp4', type: 'video', alt: 'Εμφιάλωση χυμού ροδιού' },
+  { src: 'machinery.mp4', type: 'video', alt: 'Μηχανήματα παραγωγής' },
+];
+---
+
+<Layout title={PAGES.about}>
+
+  <section class="about-intro">
+    <h1>{PAGES.about.title}</h1>
+    <div class="content">
+      <div class="text">
+        <h2>Η ιστορία μας</h2>
+        <p>
+          Η διαδρομή μας ξεκίνησε το 2012, με τη φύτευση περίπου 30 στρεμμάτων ροδιές
+          ποικιλιών Wonderful και Acco στον Κρεμαστό Ευβοίας. Με σταθερά και προσεκτικά
+          βήματα, όταν τα δέντρα έφτασαν σε πλήρη παραγωγή, αποφασίσαμε να δημιουργήσουμε
+          τον 100% φυσικό χυμό ροδιού «Ρόδι Κρεμαστός».
+        </p>
+        <p>
+          Λαμβάνοντας όλες τις απαραίτητες άδειες, στήσαμε μια μικρή μονάδα παραγωγής
+          και τυποποίησης. Από το χωράφι μέχρι την εμφιάλωση και την παράδοση στους
+          πελάτες, κάθε στάδιο γίνεται με προσωπική φροντίδα και υπευθυνότητα.
+        </p>
+        <p>
+          Το 2022 ενταχθήκαμε σε πρόγραμμα πιστοποίησης βιολογικής καλλιέργειας και,
+          ύστερα από έλεγχο από την TUV AUSTRIA HELLAS, λάβαμε την τελική πιστοποίηση.
+          Η καλλιέργειά μας είναι απαλλαγμένη από φυτοφάρμακα και ψεκασμούς.
+        </p>
+        <p>
+          Εκτός από τον χυμό ροδιού, παράγουμε επίσης κεραλοιφή με έλαιο ροδιού,
+          σιρόπι/πετιμέζι ροδιού και λικέρ από τσίπουρο και χυμό ροδιού. Είμαστε μια
+          αμιγώς οικογενειακή επιχείρηση και παρόντες σε κάθε βήμα της διαδικασίας.
+        </p>
+        <div class="badges">
+          <img class="badge-tuv" src={`${base}tuv.jpg`} alt="TUV AUSTRIA HELLAS — Πιστοποίηση βιολογικής καλλιέργειας" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section">
+    <div class="masonry" aria-label="Φωτογραφίες και βίντεο από την παραγωγή και την καλλιέργεια">
+      {media.map((m) => (
+        <figure class="masonry-item">
+          {m.type === 'image' ? (
+            <img src={`${base}${m.src}`} alt={m.alt} loading="lazy" />
+          ) : (
+            <video controls preload="metadata" playsinline>
+              <source src={`${base}${m.src}`} type="video/mp4" />
+            </video>
+          )}
+          <!-- Optional: <figcaption>{m.alt}</figcaption> -->
+        </figure>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style lang="scss">
+  .about-intro {
+    .content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    h1 { margin-bottom: 0.5rem; }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.35rem;
+    }
+
+    .text {
+      p {
+        margin: 0 0 0.8rem 0;
+        color: var(--muted);
+      }
+    }
+
+    .badges {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      img {
+        height: 44px;
+        width: auto;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .badge-tuv { height: 88px; }
+    }
+  }
+
+  .gallery-section {
+    margin-top: 2.5rem;
+
+    h2 {
+      font-size: 1.2rem;
+      margin: 0 0 1rem 0;
+      color: var(--muted);
+    }
+  }
+
+  /* Masonry layout using CSS columns */
+  .masonry {
+    column-count: 3;
+    column-gap: 1rem;
+
+    @media (max-width: 900px) {
+      column-count: 2;
+    }
+    @media (max-width: 600px) {
+      column-count: 1;
+    }
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    margin: 0 0 1rem 0;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+
+    img,
+    video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    video {
+      aspect-ratio: 9 / 16; /* portrait */
+      background: #000;
+      object-fit: cover;
+    }
+  }
+</style>
