@@ -1,0 +1,75 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { PAGES } from '../config/site';
+import { humanizeFromPath } from '../lib/media';
+
+// Use a direct glob so we can feed metadata objects to <Image /> for optimization
+const productImgModules = import.meta.glob('../assets/photos/products/*.{jpg,jpeg,png,webp,avif}', { eager: true });
+
+type ProductImage = {
+  mod: any; // image metadata / module (astro will infer width/height)
+  alt: string;
+};
+
+const media: ProductImage[] = Object.entries(productImgModules)
+  .map(([relPath, m]) => {
+    const mod: any = (m as any).default ?? m; // support both possible shapes
+    return { mod, alt: humanizeFromPath(relPath) };
+  })
+  .sort((a, b) => (a.mod.src || '').localeCompare(b.mod.src || ''));
+---
+
+<Layout title={PAGES.products}>
+  <h1>{PAGES.products.title}</h1>
+
+  <!-- <section class="product-intro">
+    <p>Απολαύστε την πλούσια, ζωηρή γεύση του 100% χυμού ροδιού, ψυχρής έκθλιψης — χωρίς προσθήκη ζάχαρης.</p>
+    <ul>
+      <li>100% ρόδι, χωρίς προσθήκη ζάχαρης</li>
+      <li>Ψυχρής έκθλιψης για διατήρηση των θρεπτικών συστατικών</li>
+      <li>Τοπικά προερχόμενα φρούτα, υπεύθυνη παραγωγή</li>
+    </ul>
+  </section> -->
+
+  <section class="gallery-section">
+    <div class="masonry" aria-label="Φωτογραφίες προϊόντων — χυμός ροδιού">
+      {media.map((m) => (
+        <figure class="masonry-item">
+          <Image src={m.mod} alt={m.alt} loading="lazy" />
+        </figure>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style lang="scss">
+  .product-intro {
+    margin: 0 0 1.25rem 0;
+    color: var(--muted);
+    ul { margin: 0.75rem 0 0 1.1rem; }
+  }
+
+  .gallery-section { margin-top: 2rem; }
+
+  .masonry {
+    column-count: 3;
+    column-gap: 1rem;
+    @media (max-width: 900px) { column-count: 2; }
+    @media (max-width: 600px) { column-count: 1; }
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    margin: 0 0 1rem 0;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+
+  /* The <Image /> component renders a <picture><img/></picture>. Style the final img. */
+  img { display: block; width: 100%; height: auto; }
+  }
+</style>

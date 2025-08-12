@@ -1,0 +1,146 @@
+---
+import { Image } from "astro:assets";
+import shoot from "../assets/shoot.png";
+import pomegranate from "../assets/pomegranate.png";
+
+interface Props {
+  title: string;
+  subtitle: string;
+  ctaHref: string;
+  ctaText: string;
+}
+
+const { title, subtitle, ctaHref, ctaText } = Astro.props as Props;
+---
+
+<section class="hero">
+  <div class="content">
+    <h1>{title}</h1>
+    <p>{subtitle}</p>
+  <p><a class="cta" href={`${import.meta.env.BASE_URL}${ctaHref.replace(/^\//, "")}`}>{ctaText}</a></p>
+  </div>
+  <div class="media">
+    <div class="scene">
+      <Image class="base" src={shoot} alt="Ρόδι Κρεμαστός — μπουκάλι, ποτήρι και φρούτα" loading="eager" />
+      <div class="label" aria-hidden="true">
+  <img class="logo" src={`${import.meta.env.BASE_URL}logo.svg`} alt="Ρόδι" />
+      <Image class="pomegranate" src={pomegranate} alt="Ρόδι" />
+  <img class="badge" src={`${import.meta.env.BASE_URL}badge.svg`} alt="Με καταγωγή, Κρεμαστός Εύβοιας!" />
+  <img class="natural-juice" src={`${import.meta.env.BASE_URL}natural-juice.svg`} alt="Φυσικός Χυμός" />
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 2rem;
+    margin-top: -4rem;
+  }
+
+  .content {
+    text-align: left;
+  }
+
+  .media {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .scene {
+    position: relative;
+  }
+
+  .base {
+    display: block;
+    width: clamp(360px, 28vw, 680px);
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 24px 60px rgba(0,0,0,0.6));
+  }
+
+  .label {
+    position: absolute;
+    left: 0;
+    top: 48%;
+    width: 34%;
+    height: 31%;
+    box-sizing: border-box;
+    pointer-events: none;
+
+    .logo {
+      display: block;
+      position: absolute;
+      top: 4%;
+      left: 2%;
+      width: 80%;
+      height: auto;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+    }
+
+    .badge {
+      display: block;
+      position: absolute;
+      width: 50%;
+      bottom: 0;
+      right: 2%;
+      height: auto;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+      transform: translateY(-4px) rotate(-4deg);
+      transform-origin: 50% 50%;
+    }
+
+    .pomegranate {
+      display: block;
+      position: absolute;
+      width: 65%;
+      height: auto;
+      bottom: 4%;
+      left: 2%;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+    }
+
+    .natural-juice {
+      display: block;
+      position: absolute;
+      width: 40%;
+      height: auto;
+      top: 25%;
+      right: 2%;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+      transform: rotate(-2deg);
+      transform-origin: 50% 50%;
+    }
+  }
+
+  .cta {
+    display: inline-block;
+    background: #b91c1c;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+
+    &:hover {
+      background: #991b1b;
+    }
+  }
+
+  /* Stack vertically on small screens: content first, media below */
+  @media (max-width: 640px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-top: 0;
+      text-align: center;
+    }
+    .content { text-align: center; }
+    .media { justify-content: center; }
+    .base { width: min(80vw, 560px); height: auto; }
+  }
+</style>
