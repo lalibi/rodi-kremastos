@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES } from '../config/site';
+---
+
+<Layout title={PAGES.product}>
+  <h1>{PAGES.product.title}</h1>
+  <p>Απολαύστε την πλούσια, ζωηρή γεύση του 100% χυμού ροδιού.</p>
+
+  <section>
+    <h2>Γιατί θα το αγαπήσετε</h2>
+    <ul>
+      <li>100% ρόδι, χωρίς προσθήκη ζάχαρης</li>
+      <li>Ψυχρής έκθλιψης για διατήρηση των θρεπτικών συστατικών</li>
+      <li>Τοπικά προερχόμενα φρούτα</li>
+    </ul>
+  </section>
+</Layout>

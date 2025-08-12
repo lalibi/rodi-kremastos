@@ -1,0 +1,15 @@
+---
+import { PAGES } from '../config/site';
+
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+---
+
+<Layout title={PAGES.home}>
+  <Hero
+    title="Το No.1 αντιοξειδωτικό για τον οργανισμό"
+    subtitle="Χυμός ροδιού 100% φυσικός, ψυχρής έκθλιψης. Γευτείτε τη διαφορά."
+    ctaHref={PAGES.product.href}
+    ctaText={PAGES.home.cta || ''}
+  />
+</Layout>
