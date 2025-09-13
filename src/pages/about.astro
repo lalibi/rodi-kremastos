@@ -1,34 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { PAGES } from '../config/site';
+import { discoverMedia, type MediaItem } from '../lib/media';
+import tuvBadge from '../assets/photos/about/tuv.jpg';
 
-const base = `${import.meta.env.BASE_URL}/photos/about/`;
-
-const media: Array<{ src: string; type: 'image' | 'video'; alt: string }> = [
-  // Photos
-  { src: 'owner-with-pomegranates.jpg', type: 'image', alt: 'Παραγωγός με ρόδια στον Κρεμαστό Ευβοίας' },
-  { src: 'owner-on-field.jpg', type: 'image', alt: 'Παραγωγός στο χωράφι' },
-  { src: 'field-1.jpg', type: 'image', alt: 'Καλλιέργεια ροδιάς – θέα στο χωράφι' },
-  { src: 'field-2.jpg', type: 'image', alt: 'Σειρές ροδιάς στο χωράφι' },
-  { src: 'field-3.jpg', type: 'image', alt: 'Καλλιέργεια ροδιάς – διαφορετική γωνία' },
-  { src: 'field-4.jpg', type: 'image', alt: 'Καλλιέργεια ροδιάς – θέα προς τον ορίζοντα' },
-  { src: 'truck-on-field.jpg', type: 'image', alt: 'Δρόμος στο χωράφι με ροδιές' },
-  { src: 'tractor-on-field.jpg', type: 'image', alt: 'Τρακτέρ στο χωράφι' },
-  { src: 'pomegranates.jpg', type: 'image', alt: 'Καλάθι με φρέσκα ρόδια' },
-  { src: 'pomegranate-cut.jpg', type: 'image', alt: 'Κομμένο ρόδι – ζουμεροί σπόροι' },
-  { src: 'pomegranate-2.jpg', type: 'image', alt: 'Κοντινό σε καρπό ροδιού' },
-  { src: 'tree.jpg', type: 'image', alt: 'Ροδιά με ώριμους καρπούς' },
-  { src: 'fruit.jpg', type: 'image', alt: 'Κοντινό πλάνο ροδιού' },
-  { src: 'new-fruits.jpg', type: 'image', alt: 'Νεαροί καρποί ροδιού στην καλλιέργεια' },
-  { src: 'new-fruit.jpg', type: 'image', alt: 'Νεαρός καρπός ροδιού' },
-  { src: 'bottle-on-desk.jpg', type: 'image', alt: 'Φιάλη χυμού ροδιού επάνω σε επιφάνεια' },
-  { src: 'bottle-seal.jpg', type: 'image', alt: 'Σφραγίδα ασφαλείας στη φιάλη' },
-  { src: 'beeswax-ointment.jpg', type: 'image', alt: 'Κεραλοιφή με έλαιο ροδιού' },
-  { src: 'pomegranate-syrup.jpg', type: 'image', alt: 'Σιρόπι/πετιμέζι ροδιού' },
-  // Videos
-  { src: 'bottling.mp4', type: 'video', alt: 'Εμφιάλωση χυμού ροδιού' },
-  { src: 'machinery.mp4', type: 'video', alt: 'Μηχανήματα παραγωγής' },
-];
+const media: MediaItem[] = await discoverMedia('about');
 ---
 
 <Layout title={PAGES.about}>
@@ -60,7 +36,7 @@ const media: Array<{ src: string; type: 'image' | 'video'; alt: string }> = [
           αμιγώς οικογενειακή επιχείρηση και παρόντες σε κάθε βήμα της διαδικασίας.
         </p>
         <div class="badges">
-          <img class="badge-tuv" src={`${base}tuv.jpg`} alt="TUV AUSTRIA HELLAS — Πιστοποίηση βιολογικής καλλιέργειας" loading="lazy" />
+          <img class="badge-tuv" src={tuvBadge.src} alt="TUV AUSTRIA HELLAS — Πιστοποίηση βιολογικής καλλιέργειας" loading="lazy" />
         </div>
       </div>
     </div>
@@ -71,10 +47,10 @@ const media: Array<{ src: string; type: 'image' | 'video'; alt: string }> = [
       {media.map((m) => (
         <figure class="masonry-item">
           {m.type === 'image' ? (
-            <img src={`${base}${m.src}`} alt={m.alt} loading="lazy" />
+            <img src={m.src} alt={m.alt} loading="lazy" />
           ) : (
             <video controls preload="metadata" playsinline>
-              <source src={`${base}${m.src}`} type="video/mp4" />
+              <source src={m.src} type="video/mp4" />
             </video>
           )}
           <!-- Optional: <figcaption>{m.alt}</figcaption> -->

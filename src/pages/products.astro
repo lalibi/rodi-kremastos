@@ -1,19 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { PAGES } from '../config/site';
+import { discoverMedia, type MediaItem } from '../lib/media';
 
-const base = `${import.meta.env.BASE_URL}/photos/products/`;
-const media: Array<{ src: string; alt: string }> = [
-  { src: 'bottles-hero-studio.jpg', alt: 'Σύνθεση με φιάλες χυμού ροδιού στο στούντιο' },
-  { src: 'bottle-single-studio.jpg', alt: 'Μονή φιάλη χυμού ροδιού στο στούντιο' },
-  { src: 'bottle-label-closeup.jpg', alt: 'Κοντινό στην ετικέτα της φιάλης' },
-  { src: 'syrup-bottle-studio.jpg', alt: 'Φιάλη σιροπιού ροδιού στο στούντιο' },
-  { src: 'beeswax-ointment-pomegranate-oil.jpg', alt: 'Κεραλοιφή με έλαιο από ρόδι' },
-  { src: 'pomegranate-syrup-on-ice-cream.jpg', alt: 'Σιρόπι ροδιού πάνω σε παγωτό' },
-  { src: 'beeswax-ointment-studio.jpg', alt: 'Κεραλοιφή — στούντιο λήψη' },
-  { src: 'syrup-bottle-on-pomegranates.jpg', alt: 'Φιάλη σιροπιού πάνω σε ρόδια' },
-  { src: 'bottle-on-beach.jpg', alt: 'Φιάλη χυμού ροδιού στην παραλία' },
-];
+const media: MediaItem[] = await discoverMedia('products');
 ---
 
 <Layout title={PAGES.products}>
@@ -32,7 +22,7 @@ const media: Array<{ src: string; alt: string }> = [
     <div class="masonry" aria-label="Φωτογραφίες προϊόντων — χυμός ροδιού">
       {media.map((m) => (
         <figure class="masonry-item">
-          <img src={`${base}${m.src}`} alt={m.alt} loading="lazy" />
+          <img src={m.src} alt={m.alt} loading="lazy" />
         </figure>
       ))}
     </div>
