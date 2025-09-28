@@ -1,0 +1,145 @@
+---
+import { PAGES, NAV_ORDER, type PageInfo } from "../config/site";
+
+const nav = NAV_ORDER.map((key) => PAGES[key]);
+const base = import.meta.env.BASE_URL; // always has trailing '/'
+const normalize = (p: string) => (p.replace(/\/+$/, "") || "/");
+const pageHref = (item: PageInfo) => item.href === "/" ? base : `${base}${item.href.replace(/^\//, "")}`;
+const isActive = (item: PageInfo) => normalize(Astro.url.pathname) === normalize(pageHref(item));
+---
+
+<div class="menu-wrap">
+  <details class="menu-root">
+    <summary class="menu-toggle" aria-controls="main-menu" aria-label="Μενού">
+      <span class="bar bar1"></span>
+      <span class="bar bar2"></span>
+      <span class="bar bar3"></span>
+    </summary>
+  </details>
+
+  <ul id="main-menu" class="main-menu" role="menu">
+    {
+      nav.map((item) => (
+        <li role="none">
+          <a
+            role="menuitem"
+            href={pageHref(item)}
+            class={isActive(item) ? "active" : ""}
+          >
+            {item.label ?? item.title}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style lang="scss">
+  .menu-wrap { position: relative; display: flex; align-items: center; }
+  .menu-root { position: relative; display: flex; align-items: center; }
+
+  /* Hamburger button */
+  .menu-toggle {
+    display: none; /* hidden on desktop */
+    position: relative;
+    width: 42px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  .menu-toggle::-webkit-details-marker { display: none; }
+  .menu-toggle::marker { content: ""; }
+  .menu-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  .bar {
+    position: absolute;
+    left: 9px;
+    right: 9px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 200ms ease, opacity 200ms ease;
+  }
+  .bar1 { top: 10px; }
+  .bar2 { top: 17px; }
+  .bar3 { top: 24px; }
+
+  /* Menu list */
+  .main-menu {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+
+    a {
+      text-decoration: none;
+      color: var(--text);
+      padding: 0.35rem 0.25rem;
+      font-size: 1.25rem;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+
+      &:hover {
+        background: transparent;
+        text-decoration: underline;
+      }
+
+      &.active {
+        color: #fff;
+        background: transparent;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 0.2rem;
+      }
+    }
+  }
+
+  /* Mobile: collapse into burger */
+  @media (max-width: 768px) {
+  .menu-toggle { display: inline-block; }
+    .menu-wrap .main-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      display: block;
+      width: min(80vw, 320px);
+      /* Light popup styling similar to Brand */
+      background: rgba(255, 255, 255, 0.88);
+      color: #111;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 6px 24px rgba(0,0,0,0.25);
+      backdrop-filter: blur(4px);
+      padding: 0.5rem;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 240ms ease, opacity 180ms ease;
+
+      li { margin: 0; }
+      a {
+        display: block;
+        padding: 0.75rem 0.75rem;
+        font-size: 1.1rem;
+        color: #111;
+        border-radius: 8px;
+        &:hover { background: rgba(0,0,0,0.06); text-decoration: none; }
+        &.active { border-bottom: none; background: rgba(185,28,28,0.15); }
+      }
+    }
+
+  /* Open state */
+    .menu-root[open] ~ .main-menu { max-height: 60vh; opacity: 1; }
+  /* Animate burger to X */
+  .menu-root[open] .bar1 { transform: translateY(7px) rotate(45deg); }
+  .menu-root[open] .bar2 { opacity: 0; }
+  .menu-root[open] .bar3 { transform: translateY(-7px) rotate(-45deg); }
+  }
+</style>
+

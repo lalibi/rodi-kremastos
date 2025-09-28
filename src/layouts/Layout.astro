@@ -1,22 +1,261 @@
+---
+import {
+  SITE,
+  buildTitle,
+  resolvePage,
+  type PageInfo,
+} from "../config/site";
+
+import Brand from "../components/Brand.astro";
+import MainMenu from "../components/MainMenu.astro";
+import Footer from "../components/Footer.astro";
+
+const patternAsset = (await import('../assets/pattern.png')).default;
+const shareImageAsset = (await import('../assets/shoot.png')).default;
+const { getImage } = await import('astro:assets');
+const avif = (await getImage({ src: patternAsset, format: 'avif', quality: 55 })).src;
+const webp = (await getImage({ src: patternAsset, format: 'webp', quality: 70 })).src;
+const shareWebp = (await getImage({ src: shareImageAsset, width: 1200, height: 630, format: 'webp', quality: 82, position: 'center' })).src;
+// image-set lets the browser pick best supported format.
+const patternCSSValue = `image-set(url('${avif}') type('image/avif'), url('${webp}') type('image/webp'), url('${patternAsset}') type('image/png'))`;
+
+export interface Props {
+  title?: PageInfo | string;
+  description?: string;
+  canonical?: string;
+  noindex?: boolean;
+  image?: string;
+  structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
+  ogType?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  noindex = false,
+  image,
+  structuredData,
+  ogType,
+} = Astro.props as Props;
+
+const resolvedPage = resolvePage(title);
+const siteUrl = Astro.site ?? new URL(SITE.url);
+const pagePath = canonical
+  ?? resolvedPage?.href
+  ?? (typeof Astro.url?.pathname === 'string' ? Astro.url.pathname : '/');
+
+const canonicalUrl = pagePath.startsWith('http')
+  ? pagePath
+  : new URL(pagePath, siteUrl).toString();
+
+const metaTitle = buildTitle(title);
+const metaDescription = (description ?? resolvedPage?.description ?? SITE.description).trim();
+
+const ogImageSrc = image && image.length > 0 ? image : shareWebp;
+const ogImageUrl = ogImageSrc.startsWith('http')
+  ? ogImageSrc
+  : new URL(ogImageSrc, siteUrl).toString();
+
+const defaultOgType = resolvedPage?.href && resolvedPage.href !== '/' ? 'article' : 'website';
+const finalOgType = ogType ?? defaultOgType;
+
+const keywords = SITE.keywords?.length ? SITE.keywords.join(', ') : undefined;
+
+const sameAs = Object.values(SITE.social ?? {}).filter(Boolean);
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: SITE.name,
+  description: SITE.description,
+  url: siteUrl.toString(),
+  image: ogImageUrl,
+  logo: new URL(SITE.logo, siteUrl).toString(),
+  telephone: SITE.organization.telephone,
+  email: SITE.organization.email,
+  address: {
+    "@type": "PostalAddress",
+    ...SITE.organization.address,
+  },
+  sameAs,
+};
+
+const breadcrumbItems = [
+  {
+    "@type": "ListItem",
+    position: 1,
+    name: "Αρχική",
+    item: siteUrl.toString(),
+  },
+];
+
+if (resolvedPage && resolvedPage.href !== '/') {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: breadcrumbItems.length + 1,
+    name: resolvedPage.title,
+    item: canonicalUrl,
+  });
+}
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbItems,
+};
+
+const extraStructured = structuredData
+  ? Array.isArray(structuredData)
+    ? structuredData
+    : [structuredData]
+  : [];
+
+const jsonLdPayload = [organizationLd, breadcrumbLd, ...extraStructured];
+---
+
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang={SITE.locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={metaDescription} />
+    {keywords && <meta name="keywords" content={keywords} />}
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0a0a0a" />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow" />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang={SITE.locale} href={canonicalUrl} />
+    <meta property="og:title" content={metaTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content={finalOgType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="el_GR" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={metaTitle} />
+    <meta name="twitter:description" content={metaDescription} />
+  <meta name="twitter:image" content={ogImageUrl} />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@600;700;800&display=swap&subset=greek"
+      rel="stylesheet"
+    />
+    <title>{buildTitle(title)}</title>
+    {jsonLdPayload.length > 0 && (
+      <script type="application/ld+json" is:inline>{JSON.stringify(jsonLdPayload, null, 2)}</script>
+    )}
+  </head>
+  <body style={`--pattern-img: ${patternCSSValue}`}>
+    <header>
+      <nav>
+        <Brand />
+        <MainMenu />
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+<style lang="scss">
+  $padding: 2rem; // base spacing unit
+  :root {
+    --bg: transparent; /* background painted on body with layered gradients */
+    --text: #f3f4f6; /* light text */
+    --muted: #e5e7eb; /* lighter gray on dark bg */
+    --primary: #b91c1c; /* pomegranate */
+    --primary-600: #991b1b;
+    --border: rgba(255, 255, 255, 0.18);
+    --font-body: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+      Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      sans-serif;
+    --font-heading: "Noto Serif", Georgia, "Times New Roman", Times, serif;
+  }
+
+  html, body {
+    margin: 0;
+    min-height: 100vh; /* ensure full height for body */
+    /* Layered background: pattern + vignette + prominent red/green radial spots over black base */
+    background:
+      /* Prevent gradients from tiling under the fold; keep them pinned to the viewport */
+      var(--pattern-img) repeat,
+      /* vignette to keep edges darker */
+      radial-gradient(
+        160% 120% at 50% 50%,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 1) 100%
+      ),
+      /* red spots */
+      radial-gradient(
+        1600px 900px at 18% 22%,
+        rgba(185, 28, 28, 0.42) 0%,
+        rgba(185, 28, 28, 0.22) 50%,
+        rgba(185, 28, 28, 0) 88%
+      ),
+      /* green spots */
+      radial-gradient(
+        1600px 900px at 82% 82%,
+        rgba(6, 95, 70, 0.42) 0%,
+        rgba(6, 95, 70, 0.22) 50%,
+        rgba(6, 95, 70, 0) 88%
+      );
+    background-color: #0a0a0a; /* slightly darker base */
+    background-blend-mode: overlay, multiply, screen, normal;
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+    background-attachment: scroll, scroll, scroll, scroll;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Flex column layout so footer stays at the bottom on short pages */
+  body {
+    min-height: 100vh;
+    min-height: 100svh; /* mobile-friendly */
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2, h3, h4, h5, h6, .brand {
+    font-family: var(--font-heading);
+  }
+
+  header {
+    // position: sticky;
+    top: 0;
+    z-index: 10;
+    background: transparent; /* blend with page */
+    backdrop-filter: none;
+    border-bottom: none;
+
+    nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: $padding;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  main {
+    width: calc(100% - 2 * $padding);
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: (4 * $padding) $padding $padding;
+    flex: 1 0 auto;
+  }
 </style>

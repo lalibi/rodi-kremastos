@@ -1,0 +1,163 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { PAGES } from '../config/site';
+import { discoverMedia, type MediaItem } from '../lib/media';
+import tuvBadge from '../assets/photos/about/tuv.jpg';
+
+// Build a map of image src -> module (with metadata) for optimized <Image /> usage
+const aboutImageModules = import.meta.glob('../assets/photos/about/*.{jpg,jpeg,png,webp,avif}', { eager: true });
+const imageModuleMap: Record<string, any> = Object.values(aboutImageModules)
+  .map((mod: any) => mod.default ?? mod)
+  .reduce((acc: Record<string, any>, mod: any) => {
+    if (mod && mod.src) acc[mod.src] = mod;
+    return acc;
+  }, {});
+
+const media: MediaItem[] = await discoverMedia('about');
+---
+
+<Layout title={PAGES.about}>
+
+  <section class="about-intro">
+    <h1>{PAGES.about.title}</h1>
+    <div class="content">
+      <div class="text">
+        <h2>Η ιστορία μας</h2>
+        <p>
+          Η διαδρομή μας ξεκίνησε το 2012, με τη φύτευση περίπου 30 στρεμμάτων ροδιές
+          ποικιλιών Wonderful και Acco στον Κρεμαστό Ευβοίας. Με σταθερά και προσεκτικά
+          βήματα, όταν τα δέντρα έφτασαν σε πλήρη παραγωγή, αποφασίσαμε να δημιουργήσουμε
+          τον 100% φυσικό χυμό ροδιού «Ρόδι Κρεμαστός».
+        </p>
+        <p>
+          Λαμβάνοντας όλες τις απαραίτητες άδειες, στήσαμε μια μικρή μονάδα παραγωγής
+          και τυποποίησης. Από το χωράφι μέχρι την εμφιάλωση και την παράδοση στους
+          πελάτες, κάθε στάδιο γίνεται με προσωπική φροντίδα και υπευθυνότητα.
+        </p>
+        <p>
+          Το 2022 ενταχθήκαμε σε πρόγραμμα πιστοποίησης βιολογικής καλλιέργειας και,
+          ύστερα από έλεγχο από την TUV AUSTRIA HELLAS, λάβαμε την τελική πιστοποίηση.
+          Η καλλιέργειά μας είναι απαλλαγμένη από φυτοφάρμακα και ψεκασμούς.
+        </p>
+        <p>
+          Εκτός από τον χυμό ροδιού, παράγουμε επίσης κεραλοιφή με έλαιο ροδιού,
+          σιρόπι/πετιμέζι ροδιού και λικέρ από τσίπουρο και χυμό ροδιού. Είμαστε μια
+          αμιγώς οικογενειακή επιχείρηση και παρόντες σε κάθε βήμα της διαδικασίας.
+        </p>
+        <div class="badges">
+          <Image class="badge-tuv" src={tuvBadge} alt="TUV AUSTRIA HELLAS — Πιστοποίηση βιολογικής καλλιέργειας" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section">
+    <div class="masonry" aria-label="Φωτογραφίες και βίντεο από την παραγωγή και την καλλιέργεια">
+      {media.map((m) => (
+        <figure class="masonry-item">
+          {m.type === 'image' ? (
+            imageModuleMap[m.src] ? (
+              <Image src={imageModuleMap[m.src]} alt={m.alt} loading="lazy" />
+            ) : (
+              <img src={m.src} alt={m.alt} loading="lazy" />
+            )
+          ) : (
+            <video controls preload="metadata" playsinline>
+              <source src={m.src} type="video/mp4" />
+            </video>
+          )}
+          <!-- Optional: <figcaption>{m.alt}</figcaption> -->
+        </figure>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style lang="scss">
+  .about-intro {
+    .content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    h1 { margin-bottom: 0.5rem; }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.35rem;
+    }
+
+    .text {
+      p {
+        margin: 0 0 0.8rem 0;
+        color: var(--muted);
+      }
+    }
+
+    .badges {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      img {
+        height: 44px;
+        width: auto;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .badge-tuv { height: 88px; }
+    }
+  }
+
+  .gallery-section {
+    margin-top: 2.5rem;
+
+    h2 {
+      font-size: 1.2rem;
+      margin: 0 0 1rem 0;
+      color: var(--muted);
+    }
+  }
+
+  /* Masonry layout using CSS columns */
+  .masonry {
+    column-count: 3;
+    column-gap: 1rem;
+
+    @media (max-width: 900px) {
+      column-count: 2;
+    }
+    @media (max-width: 600px) {
+      column-count: 1;
+    }
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    margin: 0 0 1rem 0;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+
+    img,
+    video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    video {
+      aspect-ratio: 9 / 16; /* portrait */
+      background: #000;
+      object-fit: cover;
+    }
+  }
+</style>

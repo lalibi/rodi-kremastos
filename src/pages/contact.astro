@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+import { SITE, PAGES } from '../config/site';
+---
+
+<Layout title={PAGES.contact}>
+  <h1>{PAGES.contact.title}</h1>
+
+  <div class="contact-grid">
+    <div class="map-card">
+      <div class="map-embed">
+        <iframe
+          title="Χάρτης — Ρόδι Κρεμαστός"
+          src="https://www.google.com/maps?q=Κρεμαστός%20Ευβοίας&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+      <p class="map-link">
+        <a href="https://maps.app.goo.gl/7DSck2fMTGZ8NFWV9" target="_blank" rel="noopener">Προβολή στο Google Maps</a>
+      </p>
+    </div>
+
+    <div class="details-card">
+      <h2>Στοιχεία επικοινωνίας</h2>
+      <dl class="details">
+        <dt>Παραγωγός</dt>
+        <dd>Ρέτσας Νικόλαος</dd>
+        <dt>Τηλέφωνο</dt>
+        <dd> <a href={`tel:${SITE.organization.telephone.replace(/\s+/g, "")}`}>{SITE.organization.telephone}</a></dd>
+        <dt>Περιοχή</dt>
+        <dd>Κρεμαστός Ευβοίας</dd>
+        <dt>Email</dt>
+        <dd><a href={`mailto:${SITE.organization.email}`}>{SITE.organization.email}</a></dd>
+      </dl>
+    </div>
+  </div>
+</Layout>
+
+<style lang="scss">
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 2rem;
+    align-items: start;
+    // control the map embed height and match right card
+    --contact-map-h: 420px;
+
+    .map-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-embed {
+      height: var(--contact-map-h);
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    .map-link {
+      margin: 0.5rem 0 0;
+
+      a {
+        color: #fff;
+        text-decoration: underline;
+      }
+    }
+
+    .details-card {
+      background: rgba(255, 255, 255, 0.85);
+      color: #111;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+        0 6px 24px rgba(0, 0, 0, 0.25);
+      padding: 0 1.25rem;
+      min-height: var(--contact-map-h); // match map embed height
+      display: flex;
+      flex-direction: column;
+
+      .details {
+        margin: 0;
+
+        dt {
+          font-weight: 700;
+          margin-top: 0.5rem;
+        }
+
+        dd {
+          margin: 0.2rem 0 .5rem 0;
+
+          &:last-child {
+            margin-bottom: 1.5rem;
+          }
+        }
+
+        a {
+          color: inherit;
+        }
+      }
+    }
+
+    @media (max-width: 900px) {
+      --contact-map-h: 360px;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      align-items: start;
+
+      .details-card {
+        min-height: unset;
+      }
+    }
+  }
+</style>
