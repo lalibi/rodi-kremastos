@@ -18,6 +18,7 @@ const webp = (await getImage({ src: patternAsset, format: 'webp', quality: 70 })
 const shareWebp = (await getImage({ src: shareImageAsset, width: 1200, height: 630, format: 'webp', quality: 82, position: 'center' })).src;
 // image-set lets the browser pick best supported format.
 const patternCSSValue = `image-set(url('${avif}') type('image/avif'), url('${webp}') type('image/webp'), url('${patternAsset}') type('image/png'))`;
+const googleFontsHref = "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@600;700;800&display=swap&subset=greek";
 
 export interface Props {
   title?: PageInfo | string;
@@ -143,10 +144,8 @@ const jsonLdPayload = [organizationLd, breadcrumbLd, ...extraStructured];
     <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@600;700;800&display=swap&subset=greek"
-      rel="stylesheet"
-    />
+    <link rel="preload" as="style" href={googleFontsHref} crossorigin />
+    <link href={googleFontsHref} rel="stylesheet" crossorigin />
     <title>{buildTitle(title)}</title>
     {jsonLdPayload.length > 0 && (
       <script type="application/ld+json" is:inline>{JSON.stringify(jsonLdPayload, null, 2)}</script>
