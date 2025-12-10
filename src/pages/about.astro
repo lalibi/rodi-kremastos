@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Image } from 'astro:assets';
+import { Image, Picture } from 'astro:assets';
 import { PAGES } from '../config/site';
 import { discoverMedia, type MediaItem } from '../lib/media';
 import tuvBadge from '../assets/photos/about/tuv.jpg';
@@ -15,6 +15,7 @@ const imageModuleMap: Record<string, any> = Object.values(aboutImageModules)
   }, {});
 
 const media: MediaItem[] = await discoverMedia('about');
+const gallerySizes = "(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw";
 ---
 
 <Layout title={PAGES.about}>
@@ -54,22 +55,35 @@ const media: MediaItem[] = await discoverMedia('about');
 
   <section class="gallery-section">
     <div class="masonry" aria-label="Φωτογραφίες και βίντεο από την παραγωγή και την καλλιέργεια">
-      {media.map((m) => (
-        <figure class="masonry-item">
-          {m.type === 'image' ? (
-            imageModuleMap[m.src] ? (
-              <Image src={imageModuleMap[m.src]} alt={m.alt} loading="lazy" />
+      {media.map((m) => {
+        const optimized = imageModuleMap[m.src];
+        return (
+          <figure class="masonry-item">
+            {m.type === 'image' ? (
+              optimized ? (
+                <Picture
+                  src={optimized}
+                  alt={m.alt}
+                  loading="lazy"
+                  layout="constrained"
+                  sizes={gallerySizes}
+                  formats={["avif", "webp"]}
+                  width={optimized.width}
+                  height={optimized.height}
+                  fit="cover"
+                />
+              ) : (
+                <img src={m.src} alt={m.alt} loading="lazy" />
+              )
             ) : (
-              <img src={m.src} alt={m.alt} loading="lazy" />
-            )
-          ) : (
-            <video controls preload="metadata" playsinline>
-              <source src={m.src} type="video/mp4" />
-            </video>
-          )}
-          <!-- Optional: <figcaption>{m.alt}</figcaption> -->
-        </figure>
-      ))}
+              <video controls preload="metadata" playsinline>
+                <source src={m.src} type="video/mp4" />
+              </video>
+            )}
+            <!-- Optional: <figcaption>{m.alt}</figcaption> -->
+          </figure>
+        );
+      })}
     </div>
   </section>
 </Layout>
@@ -148,8 +162,14 @@ const media: MediaItem[] = await discoverMedia('about');
     background: rgba(255, 255, 255, 0.03);
 
     img,
-    video {
+    video,
+    picture {
       display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    picture img {
       width: 100%;
       height: auto;
     }

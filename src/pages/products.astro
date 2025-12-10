@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { PAGES } from '../config/site';
 import { humanizeFromPath } from '../lib/media';
 
@@ -18,6 +18,7 @@ const media: ProductImage[] = Object.entries(productImgModules)
     return { mod, alt: humanizeFromPath(relPath) };
   })
   .sort((a, b) => (a.mod.src || '').localeCompare(b.mod.src || ''));
+const gallerySizes = "(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw";
 ---
 
 <Layout title={PAGES.products}>
@@ -36,7 +37,17 @@ const media: ProductImage[] = Object.entries(productImgModules)
     <div class="masonry" aria-label="Φωτογραφίες προϊόντων — χυμός ροδιού">
       {media.map((m) => (
         <figure class="masonry-item">
-          <Image src={m.mod} alt={m.alt} loading="lazy" />
+          <Picture
+            src={m.mod}
+            alt={m.alt}
+            loading="lazy"
+            layout="constrained"
+            sizes={gallerySizes}
+            formats={["avif", "webp"]}
+            width={m.mod.width}
+            height={m.mod.height}
+            fit="cover"
+          />
         </figure>
       ))}
     </div>
@@ -69,7 +80,16 @@ const media: ProductImage[] = Object.entries(productImgModules)
     border: 1px solid var(--border);
     background: rgba(255, 255, 255, 0.03);
 
-  /* The <Image /> component renders a <picture><img/></picture>. Style the final img. */
-  img { display: block; width: 100%; height: auto; }
+  picture,
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  picture img {
+    width: 100%;
+    height: auto;
+  }
   }
 </style>
