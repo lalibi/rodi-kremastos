@@ -145,7 +145,7 @@ const jsonLdPayload = [organizationLd, breadcrumbLd, ...extraStructured];
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href={googleFontsHref} crossorigin />
-    <link href={googleFontsHref} rel="stylesheet" />
+    <link href={googleFontsHref} rel="stylesheet" crossorigin />
     <title>{buildTitle(title)}</title>
     {jsonLdPayload.length > 0 && (
       <script type="application/ld+json" is:inline>{JSON.stringify(jsonLdPayload, null, 2)}</script>
